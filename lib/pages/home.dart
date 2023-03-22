@@ -87,12 +87,12 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        child: const Text(
-                          'login',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold),
+                        child: Text(
+                          'Login',
+                          style: GoogleFonts.itim(
+                            textStyle: const TextStyle(
+                                color: Colors.black, fontSize: 30),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -119,12 +119,12 @@ class HomePage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        child: const Text(
-                          'register',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold),
+                        child: Text(
+                          'Register',
+                          style: GoogleFonts.itim(
+                            textStyle: const TextStyle(
+                                color: Colors.black, fontSize: 30),
+                          ),
                         ),
                       ),
                     ],

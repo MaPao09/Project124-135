@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,6 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  bool _obscurePassword = true;
   CollectionReference users =
       FirebaseFirestore.instance.collection('users'); // Add CollectionReference
   final GlobalKey<FormState> _formKey = GlobalKey();
@@ -25,14 +26,13 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Register Page',
       home: Scaffold(
         backgroundColor: const Color.fromARGB(255, 255, 203, 47),
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
           title: Text(
-            'ร้านตัดผม',
+            'Sprite Barber',
             style: GoogleFonts.itim(
               textStyle: const TextStyle(color: Colors.black, fontSize: 30),
             ),
@@ -42,7 +42,7 @@ class _RegisterPageState extends State<RegisterPage> {
           child: SizedBox(
             width: 380,
             child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 0),
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
               children: [
                 Image.asset(
                   'assets/images/logo.png',
@@ -50,7 +50,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 250,
                 ),
                 _registerHeader(),
-                _registerForm(),
+                _registerForm()
               ],
             ),
           ),
@@ -80,50 +80,71 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Widget _registerForm() {
-    return Container(
-      height: 400,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            _buildTextField(
-              labelText: 'Full Name',
-              icon: Icons.person,
-              controller: _name,
-            ),
-            _buildTextField(
-              labelText: 'Email',
-              icon: Icons.email,
-              controller: _email,
-            ),
-            _buildTextField(
-              labelText: 'Username',
-              icon: Icons.person_outline,
-              controller: _username,
-            ),
-            _buildTextField(
-              labelText: 'Password',
-              icon: Icons.password,
-              controller: _password,
-              obscureText: _obscurePassword,
-              suffixIcon: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _obscurePassword = !_obscurePassword;
-                  });
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              _buildTextField(
+                labelText: 'Full Name',
+                icon: Icons.person,
+                controller: _name,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Please Enter Name";
+                  }
+                  return null;
                 },
-                child: Icon(
-                  _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                  color: Colors.black,
-                ),
               ),
-            ),
-            _registerButton(),
-          ],
+              _buildTextField(
+                labelText: 'Email',
+                icon: Icons.email,
+                controller: _email,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Please Enter Email";
+                  }
+                  final pattern = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,}$');
+                  if (!pattern.hasMatch(value)) {
+                    return 'Invalid email format';
+                  }
+                  return null;
+                },
+              ),
+              _buildTextField(
+                labelText: 'Username',
+                icon: Icons.person_outline,
+                controller: _username,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Please Enter Username";
+                  }
+                  return null;
+                },
+              ),
+              _buildTextField(
+                labelText: 'Password',
+                icon: Icons.password,
+                controller: _password,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Please Enter Password";
+                  }
+                  if (value.length < 8) {
+                    return 'Password must be at least 8 characters long';
+                  }
+                  return null;
+                },
+              ),
+              _registerButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -133,14 +154,17 @@ class _RegisterPageState extends State<RegisterPage> {
       {required String labelText,
       required IconData icon,
       required TextEditingController controller,
-      bool obscureText = false,
+      required FormFieldValidator validator,
       Widget? suffixIcon}) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(5, 20, 5, 0),
+      padding: const EdgeInsets.fromLTRB(5, 15, 5, 0),
       child: TextFormField(
         controller: controller,
-        obscureText: obscureText,
-        style: const TextStyle(color: Colors.black),
+        validator: validator,
+        style: GoogleFonts.itim(
+          // แก้ไขตรงนี้
+          textStyle: TextStyle(color: Colors.black),
+        ),
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
@@ -183,6 +207,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   "email": _email.text,
                   "username": _username.text,
                   "password": _password.text,
+                  "level": 'user',
                 });
                 Navigator.push(
                     context,
@@ -209,10 +234,11 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ),
         ),
-        child: const Text(
-          'register',
-          style: TextStyle(
-              color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
+        child: Text(
+          'Register',
+          style: GoogleFonts.itim(
+            textStyle: const TextStyle(color: Colors.black, fontSize: 30),
+          ),
         ),
       ),
     );

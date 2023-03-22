@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:miniproject/pages/profile.dart';
+import 'package:miniproject/pages/bar.dart';
+import 'package:miniproject/pages/time.dart';
 
-import '../service/auth_service.dart';
+import 'package:miniproject/service/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -21,14 +23,13 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Login Page',
       home: Scaffold(
         backgroundColor: const Color.fromARGB(255, 255, 203, 47),
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
           title: Text(
-            'ร้านตัดผม',
+            'Sprite Barber',
             style: GoogleFonts.itim(
               textStyle: const TextStyle(color: Colors.black, fontSize: 30),
             ),
@@ -76,40 +77,57 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _loginForm() {
-    return Container(
-      height: 400,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            _buildTextField(
-              labelText: 'Username',
-              icon: Icons.person_outline,
-              controller: _username,
-            ),
-            _buildTextField(
-              labelText: 'Password',
-              icon: Icons.password,
-              controller: _password,
-              obscureText: _obscurePassword,
-              suffixIcon: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _obscurePassword = !_obscurePassword;
-                  });
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              _buildTextField(
+                labelText: 'Username',
+                icon: Icons.person_outline,
+                controller: _username,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Please Enter Username";
+                  }
+                  return null;
                 },
-                child: Icon(
-                  _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                  color: Colors.black,
+              ),
+              _buildTextField(
+                labelText: 'Password',
+                icon: Icons.password,
+                controller: _password,
+                obscureText: _obscurePassword,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return "Please Enter Username";
+                  }
+                  if (value.length < 8) {
+                    return 'Password must be at least 8 characters long';
+                  }
+                  return null;
+                },
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                  child: Icon(
+                    _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.black,
+                  ),
                 ),
               ),
-            ),
-            _loginButton(),
-          ],
+              _loginButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -118,6 +136,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildTextField(
       {required String labelText,
       required IconData icon,
+      required FormFieldValidator validator,
       required TextEditingController controller,
       bool obscureText = false,
       Widget? suffixIcon}) {
@@ -126,7 +145,11 @@ class _LoginPageState extends State<LoginPage> {
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
-        style: const TextStyle(color: Colors.black),
+        validator: validator,
+        style: GoogleFonts.itim(
+          // แก้ไขตรงนี้
+          textStyle: TextStyle(color: Colors.black),
+        ),
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
@@ -155,21 +178,30 @@ class _LoginPageState extends State<LoginPage> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(5, 20, 5, 0),
       child: ElevatedButton(
-        onPressed: () {
-          // Code for handling login button press
+        onPressed: () async {
           if (_formKey.currentState!.validate()) {
-            AuthService.loginUser(_username.text + '@gmail.com', _password.text)
-                .then((value) {
-              if (value == 1) {
+            final level = await AuthService.loginUser(
+                _username.text + '@gmail.com', _password.text);
+            if (level != null) {
+              AuthService.saveLoginStatus(true);
+              if (level == 'admin') {
                 Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Profile(),
-                    ));
-              } else {
-                print("FAILED Login");
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddData(),
+                  ),
+                );
+              } else if (level == 'user') {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Bar(),
+                  ),
+                );
               }
-            });
+            } else {
+              print("FAILED Login");
+            }
           }
         },
         style: ButtonStyle(
@@ -186,10 +218,11 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
-        child: const Text(
-          'login',
-          style: TextStyle(
-              color: Colors.black, fontSize: 24, fontWeight: FontWeight.bold),
+        child: Text(
+          'Login',
+          style: GoogleFonts.itim(
+            textStyle: const TextStyle(color: Colors.black, fontSize: 30),
+          ),
         ),
       ),
     );

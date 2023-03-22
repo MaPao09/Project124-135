@@ -1,8 +1,19 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
-//register
+  static Future<void> saveLoginStatus(bool isLoggedIn) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', isLoggedIn);
+  }
+
+  static Future<bool> getLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isLoggedIn') ?? false;
+  }
+
+  //register
   static Future<int> registerUser(String email, String password) async {
     try {
       final credential =
@@ -10,6 +21,10 @@ class AuthService {
         email: email,
         password: password,
       );
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(credential.user!.uid)
+          .set({'email': email});
       return 1;
     } on FirebaseAuthException catch (e) {
       print(e.code);
@@ -26,20 +41,51 @@ class AuthService {
   }
 
   //login
-  static Future<int> loginUser(String email, String password) async {
+  static Future<String?> loginUser(String email, String password) async {
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      return 1;
+      return getUserLevel(); // Return user level after successful login
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided for that user.');
       }
-      return 0;
+      return null; // Return null if login fails
     }
+  }
+
+  //logout
+  static Future<void> logoutUser() async {
+    await FirebaseAuth.instance.signOut();
+    await saveLoginStatus(false); // Set login status to false on logout
+  }
+
+  //get user name
+  static Future<String?> getUserName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      return userData.get('name');
+    }
+    return null;
+  }
+
+  static Future<String?> getUserLevel() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      return userData.get('level');
+    }
+    return null;
   }
 }
