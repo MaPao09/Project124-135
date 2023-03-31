@@ -21,6 +21,11 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final imageSize = screenWidth * 0.6;
+    final formWidth = screenWidth * 0.9;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -35,20 +40,23 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
-        body: Center(
-          child: SizedBox(
-            width: 380,
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 30),
-              children: [
-                Image.asset(
-                  'assets/images/logo.png',
-                  width: 250,
-                  height: 250,
-                ),
-                _loginHeader(),
-                _loginForm(),
-              ],
+        body: SingleChildScrollView(
+          child: Center(
+            child: SizedBox(
+              width: formWidth,
+              child: Column(
+                children: [
+                  SizedBox(height: screenHeight * 0.03),
+                  Image.asset(
+                    'assets/images/logo.png',
+                    width: imageSize,
+                    height: imageSize,
+                  ),
+                  _loginHeader(),
+                  _loginForm(),
+                  SizedBox(height: screenHeight * 0.03),
+                ],
+              ),
             ),
           ),
         ),
@@ -69,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
           'Login to My App',
           style: GoogleFonts.itim(
             textStyle:
-                const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
       ),
@@ -77,57 +85,55 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _loginForm() {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              _buildTextField(
-                labelText: 'Username',
-                icon: Icons.person_outline,
-                controller: _username,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "Please Enter Username";
-                  }
-                  return null;
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            _buildTextField(
+              labelText: 'Username',
+              icon: Icons.person_outline,
+              controller: _username,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "Please Enter Username";
+                }
+                return null;
+              },
+            ),
+            _buildTextField(
+              labelText: 'Password',
+              icon: Icons.password,
+              controller: _password,
+              obscureText: _obscurePassword,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "Please Enter Password";
+                }
+                if (value.length < 8) {
+                  return 'Password must be at least 8 characters long';
+                }
+                return null;
+              },
+              suffixIcon: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _obscurePassword = !_obscurePassword;
+                  });
                 },
-              ),
-              _buildTextField(
-                labelText: 'Password',
-                icon: Icons.password,
-                controller: _password,
-                obscureText: _obscurePassword,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return "Please Enter Username";
-                  }
-                  if (value.length < 8) {
-                    return 'Password must be at least 8 characters long';
-                  }
-                  return null;
-                },
-                suffixIcon: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
-                  child: Icon(
-                    _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                    color: Colors.black,
-                  ),
+                child: Icon(
+                  _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                  color: Colors.black,
                 ),
               ),
-              _loginButton(),
-            ],
-          ),
+            ),
+            _loginButton(),
+          ],
         ),
       ),
     );
@@ -136,7 +142,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildTextField(
       {required String labelText,
       required IconData icon,
-      required FormFieldValidator validator,
+      required FormFieldValidator<String> validator,
       required TextEditingController controller,
       bool obscureText = false,
       Widget? suffixIcon}) {
@@ -147,24 +153,22 @@ class _LoginPageState extends State<LoginPage> {
         obscureText: obscureText,
         validator: validator,
         style: GoogleFonts.itim(
-          // แก้ไขตรงนี้
           textStyle: TextStyle(color: Colors.black),
         ),
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.black), // Set border color
+            borderSide: BorderSide(color: Colors.black),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide:
-                BorderSide(color: Colors.black), // Set focused border color
+            borderSide: BorderSide(color: Colors.black),
           ),
           labelText: labelText,
           labelStyle: GoogleFonts.itim(
             textStyle: TextStyle(
               color: Color.fromARGB(255, 0, 0, 0),
-              fontSize: 18,
+              fontSize: 13,
             ),
           ),
           prefixIcon: Icon(icon, color: Colors.black),
@@ -221,7 +225,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Text(
           'Login',
           style: GoogleFonts.itim(
-            textStyle: const TextStyle(color: Colors.black, fontSize: 30),
+            textStyle: const TextStyle(color: Colors.black, fontSize: 20),
           ),
         ),
       ),

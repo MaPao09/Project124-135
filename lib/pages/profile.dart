@@ -82,7 +82,7 @@ class _ProfileState extends State<Profile> {
                 ),
                 SizedBox(height: 30),
                 Container(
-                    padding: EdgeInsets.all(16),
+                    padding: EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
@@ -117,10 +117,10 @@ Widget _buildProfileField(
       Text(
         '$label: ${userData[key]}',
         style: GoogleFonts.itim(
-          textStyle: TextStyle(fontSize: 20),
+          textStyle: TextStyle(fontSize: 15),
         ),
       ),
-      SizedBox(height: 8),
+      SizedBox(height: 4),
     ],
   );
 }
@@ -142,42 +142,60 @@ Widget _buildUserBookings() {
             borderRadius: BorderRadius.circular(10),
             child: Container(
               color: Colors.white,
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(6),
               child: DataTable(
                 headingRowColor: MaterialStateColor.resolveWith((states) =>
                     Colors.white), // Set heading row background color to white
-                columnSpacing: 16,
+                columnSpacing: 10,
                 columns: [
                   DataColumn(
-                      label: Text(
-                    'วันที่จอง',
-                    style: GoogleFonts.itim(
-                      textStyle:
-                          const TextStyle(color: Colors.black, fontSize: 20),
+                      label: Center(
+                    child: Text(
+                      'วันที่จอง',
+                      style: GoogleFonts.itim(
+                        textStyle:
+                            const TextStyle(color: Colors.black, fontSize: 15),
+                      ),
                     ),
                   )),
                   DataColumn(
-                      label: Text(
-                    'เวลา',
-                    style: GoogleFonts.itim(
-                      textStyle:
-                          const TextStyle(color: Colors.black, fontSize: 20),
+                      label: Center(
+                    child: Text(
+                      '    เวลา',
+                      style: GoogleFonts.itim(
+                        textStyle:
+                            const TextStyle(color: Colors.black, fontSize: 15),
+                      ),
                     ),
                   )),
                   DataColumn(
-                      label: Text(
-                    'ทรงผมที่เลือก',
-                    style: GoogleFonts.itim(
-                      textStyle:
-                          const TextStyle(color: Colors.black, fontSize: 20),
+                      label: Center(
+                    child: Text(
+                      'ทรงผมที่เลือก',
+                      style: GoogleFonts.itim(
+                        textStyle:
+                            const TextStyle(color: Colors.black, fontSize: 15),
+                      ),
                     ),
                   )),
                   DataColumn(
-                      label: Text(
-                    'ราคา',
-                    style: GoogleFonts.itim(
-                      textStyle:
-                          const TextStyle(color: Colors.black, fontSize: 20),
+                      label: Center(
+                    child: Text(
+                      'ราคา',
+                      style: GoogleFonts.itim(
+                        textStyle:
+                            const TextStyle(color: Colors.black, fontSize: 15),
+                      ),
+                    ),
+                  )),
+                  DataColumn(
+                      label: Center(
+                    child: Text(
+                      '   ยกเลิก',
+                      style: GoogleFonts.itim(
+                        textStyle:
+                            const TextStyle(color: Colors.black, fontSize: 15),
+                      ),
                     ),
                   )),
                 ],
@@ -188,30 +206,64 @@ Widget _buildUserBookings() {
                     color: MaterialStateColor.resolveWith((states) =>
                         Colors.white), // Set data row background color to white
                     cells: [
-                      DataCell(Text(
-                        DateFormat.yMMMd().format(bookingDate),
-                        style: GoogleFonts.itim(
-                          textStyle: const TextStyle(color: Colors.black),
+                      DataCell(Center(
+                        child: Text(
+                          DateFormat.yMMMd().format(bookingDate),
+                          style: GoogleFonts.itim(
+                            textStyle: const TextStyle(
+                                color: Colors.black, fontSize: 10),
+                          ),
                         ),
                       )),
-                      DataCell(Text(
-                        booking['time'],
-                        style: GoogleFonts.itim(
-                          textStyle: const TextStyle(color: Colors.black),
+                      DataCell(Center(
+                        child: Text(
+                          booking['time'],
+                          style: GoogleFonts.itim(
+                            textStyle: const TextStyle(
+                                color: Colors.black, fontSize: 10),
+                          ),
                         ),
                       )),
-                      DataCell(Text(
-                        booking['hairstyle'],
-                        style: GoogleFonts.itim(
-                          textStyle: const TextStyle(color: Colors.black),
+                      DataCell(Center(
+                        child: Text(
+                          booking['hairstyle'],
+                          style: GoogleFonts.itim(
+                            textStyle: const TextStyle(
+                                color: Colors.black, fontSize: 10),
+                          ),
                         ),
                       )),
-                      DataCell(Text(
-                        '${booking['price']} บาท',
-                        style: GoogleFonts.itim(
-                          textStyle: const TextStyle(color: Colors.black),
+                      DataCell(Center(
+                        child: Text(
+                          '${booking['price']} บาท',
+                          style: GoogleFonts.itim(
+                            textStyle: const TextStyle(
+                                color: Colors.black, fontSize: 10),
+                          ),
                         ),
                       )),
+                      DataCell(
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: () =>
+                                _cancelBooking(context, bookingDoc.id),
+                            child: Text(
+                              'ยกเลิก',
+                              style: GoogleFonts.itim(
+                                textStyle: const TextStyle(
+                                    color: Colors.white, fontSize: 10),
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   );
                 }).toList(),
@@ -220,8 +272,91 @@ Widget _buildUserBookings() {
           ),
         );
       } else {
-        return SizedBox.shrink();
+        return Center(child: CircularProgressIndicator());
       }
     },
   );
+}
+
+Future<void> _cancelBooking(BuildContext context, String bookingId) async {
+  final confirmCancel = await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(
+          'ยืนยันการยกเลิก',
+          style: GoogleFonts.itim(
+            textStyle: const TextStyle(
+              color: Colors.black,
+            ),
+          ),
+        ),
+        content: Text(
+          'คุณต้องการยกเลิกการจองคิวนี้หรือไม่?',
+          style: GoogleFonts.itim(
+            textStyle: const TextStyle(
+              color: Colors.black,
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            child: Text(
+              'ยดเลิก',
+              style: GoogleFonts.itim(
+                textStyle: const TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+          ),
+          TextButton(
+            child: Text(
+              'ยืนยัน',
+              style: GoogleFonts.itim(
+                textStyle: const TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          ),
+        ],
+      );
+    },
+  );
+
+  if (confirmCancel == true) {
+    try {
+      await _firestore.collection('bookings').doc(bookingId).update({
+        'bookedBy': FieldValue.delete(),
+        'hairstyle': FieldValue.delete(),
+        'price': FieldValue.delete(),
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+          'ยกเลิกการจองคิวเรียบร้อยแล้ว',
+          style: GoogleFonts.itim(
+            textStyle: const TextStyle(color: Colors.white, fontSize: 10),
+          ),
+        )),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+          'เกิดข้อผิดพลาดในการยกเลิกการจองคิว',
+          style: GoogleFonts.itim(
+            textStyle: const TextStyle(color: Colors.white, fontSize: 10),
+          ),
+        )),
+      );
+    }
+  }
 }

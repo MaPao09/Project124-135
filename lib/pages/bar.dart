@@ -16,10 +16,12 @@ class _BarState extends State<Bar> {
   int? _previousIndex;
 
   void _onItemTapped(int index) {
-    setState(() {
-      _previousIndex = _selectedIndex;
-      _selectedIndex = index;
-    });
+    if (index != _selectedIndex) {
+      setState(() {
+        _previousIndex = _selectedIndex;
+        _selectedIndex = index;
+      });
+    }
   }
 
   Future<bool> _onWillPop() async {

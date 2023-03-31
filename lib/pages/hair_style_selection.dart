@@ -253,7 +253,7 @@ class _BookingPageState extends State<BookingPage> {
                       child: Text(
                         _selectedHairStyle.toString(),
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                            fontSize: 13, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -262,7 +262,7 @@ class _BookingPageState extends State<BookingPage> {
                       child: Text(
                         'ราคา ' + _selectedHairStylePrice.toString() + ' บาท',
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                            fontSize: 13, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -274,7 +274,6 @@ class _BookingPageState extends State<BookingPage> {
         : SizedBox.shrink();
   }
 
-/////////////////////////////////////////////////////////////////////////
   Widget _buildDateSelector(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -283,7 +282,7 @@ class _BookingPageState extends State<BookingPage> {
         children: [
           Text(
             DateFormat.yMMMd().format(_selectedDate),
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -301,7 +300,7 @@ class _BookingPageState extends State<BookingPage> {
             },
             child: Text(
               'เลือกวันที่จอง',
-              style: GoogleFonts.itim(),
+              style: GoogleFonts.itim(fontSize: 13),
             ),
             style: ElevatedButton.styleFrom(
               primary: Colors.white,
@@ -399,7 +398,6 @@ class _BookingPageState extends State<BookingPage> {
               ? () async {
 // ... (existing cancel booking logic)
 
-// Add your cancel booking logic here
                   await _showConfirmationDialog(
                     'ยกเลิกการจอง',
                     'คุณแน่ใจใช่ไหมที่จะยกเลิกการจองนี้?',
@@ -431,7 +429,12 @@ class _BookingPageState extends State<BookingPage> {
                 if (userBooking.docs.isNotEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('คุณได้จองคิวของวันนี้ไปแล้ว'),
+                      content: Text(
+                        'คุณได้จองคิวของวันนี้ไปแล้ว',
+                        style: GoogleFonts.itim(
+                          textStyle: TextStyle(fontSize: 13),
+                        ),
+                      ),
                       backgroundColor: Colors.red,
                     ),
                   );
@@ -479,7 +482,7 @@ class _BookingPageState extends State<BookingPage> {
                   : isBookingTimeValid
                       ? 'จองไปแล้ว'
                       : 'เลยเวลาจอง',
-          style: TextStyle(fontSize: 16),
+          style: TextStyle(fontSize: 13),
         ),
       ),
     );

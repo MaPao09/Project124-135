@@ -15,10 +15,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(milliseconds: 10), navigateToNextScreen);
+    navigateToNextScreen();
   }
 
-  void navigateToNextScreen() async {
+  Future<void> navigateToNextScreen() async {
+    await Future.delayed(Duration(seconds: 1));
     bool isLoggedIn = await AuthService.getLoginStatus();
     String? userRole;
     if (isLoggedIn) {

@@ -8,6 +8,9 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Beautiful App Bar Example',
@@ -25,20 +28,20 @@ class HomePage extends StatelessWidget {
         ),
         body: Center(
           child: SizedBox(
-            width: 380,
+            width: screenWidth * 0.9,
             child: ListView(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(top: 50),
+                  padding: EdgeInsets.only(top: screenHeight * 0.05),
                   child: Image.asset(
                     'assets/images/logo.png', // Replace this with the path to your logo file
-                    width: 300,
-                    height: 300,
+                    width: screenWidth * 0.8,
+                    height: screenWidth * 0.8,
                   ),
                 ),
                 const SizedBox(height: 20),
                 Container(
-                  height: 50, // increase the height of the container
+                  height: screenHeight * 0.07,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -48,14 +51,14 @@ class HomePage extends StatelessWidget {
                       'Welcome to My App',
                       style: GoogleFonts.itim(
                         textStyle: const TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 20),
                 Container(
-                  height: 140,
+                  height: screenHeight * 0.2,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(10),
@@ -79,7 +82,7 @@ class HomePage extends StatelessWidget {
                             const TextStyle(color: Colors.black),
                           ),
                           fixedSize: MaterialStateProperty.all(
-                            const Size(370, 50),
+                            Size(screenWidth * 0.8, screenHeight * 0.07),
                           ),
                           shape: MaterialStateProperty.all(
                             RoundedRectangleBorder(
@@ -91,7 +94,7 @@ class HomePage extends StatelessWidget {
                           'Login',
                           style: GoogleFonts.itim(
                             textStyle: const TextStyle(
-                                color: Colors.black, fontSize: 30),
+                                color: Colors.black, fontSize: 20),
                           ),
                         ),
                       ),
@@ -111,7 +114,7 @@ class HomePage extends StatelessWidget {
                             const TextStyle(color: Colors.black),
                           ),
                           fixedSize: MaterialStateProperty.all(
-                            const Size(370, 50),
+                            Size(screenWidth * 0.8, screenHeight * 0.07),
                           ),
                           shape: MaterialStateProperty.all(
                             RoundedRectangleBorder(
@@ -123,7 +126,7 @@ class HomePage extends StatelessWidget {
                           'Register',
                           style: GoogleFonts.itim(
                             textStyle: const TextStyle(
-                                color: Colors.black, fontSize: 30),
+                                color: Colors.black, fontSize: 20),
                           ),
                         ),
                       ),

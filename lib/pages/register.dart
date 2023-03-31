@@ -22,8 +22,12 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final TextEditingController _username = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -40,17 +44,20 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         body: Center(
           child: SizedBox(
-            width: 380,
+            width: screenWidth * 0.9,
             child: ListView(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
               children: [
-                Image.asset(
-                  'assets/images/logo.png',
-                  width: 250,
-                  height: 250,
+                Padding(
+                  padding: EdgeInsets.only(top: screenHeight * 0.05),
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    width: screenWidth * 0.6,
+                    height: screenWidth * 0.6,
+                  ),
                 ),
                 _registerHeader(),
-                _registerForm()
+                _registerForm(screenHeight),
               ],
             ),
           ),
@@ -72,14 +79,14 @@ class _RegisterPageState extends State<RegisterPage> {
           'Register to My App',
           style: GoogleFonts.itim(
             textStyle:
-                const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ),
       ),
     );
   }
 
-  Widget _registerForm() {
+  Widget _registerForm(double screenHeight) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -142,7 +149,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   return null;
                 },
               ),
-              _registerButton(),
+              _registerButton(screenHeight),
             ],
           ),
         ),
@@ -162,7 +169,6 @@ class _RegisterPageState extends State<RegisterPage> {
         controller: controller,
         validator: validator,
         style: GoogleFonts.itim(
-          // แก้ไขตรงนี้
           textStyle: TextStyle(color: Colors.black),
         ),
         decoration: InputDecoration(
@@ -179,7 +185,7 @@ class _RegisterPageState extends State<RegisterPage> {
           labelStyle: GoogleFonts.itim(
             textStyle: TextStyle(
               color: Color.fromARGB(255, 0, 0, 0),
-              fontSize: 18,
+              fontSize: 13,
             ),
           ),
           prefixIcon: Icon(icon, color: Colors.black),
@@ -189,13 +195,12 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _registerButton() {
+  Widget _registerButton(double screenHeight) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(5, 20, 5, 0),
       child: ElevatedButton(
         onPressed: () {
-          // Code for handling register button press
-
+// Code for handling register button press
           if (_formKey.currentState!.validate()) {
             AuthService.registerUser(
                     _username.text + '@gmail.com', _password.text)
@@ -226,7 +231,7 @@ class _RegisterPageState extends State<RegisterPage> {
             const TextStyle(color: Colors.black),
           ),
           fixedSize: MaterialStateProperty.all(
-            const Size(double.maxFinite, 50),
+            Size(double.maxFinite, screenHeight * 0.07),
           ),
           shape: MaterialStateProperty.all(
             RoundedRectangleBorder(
@@ -237,7 +242,7 @@ class _RegisterPageState extends State<RegisterPage> {
         child: Text(
           'Register',
           style: GoogleFonts.itim(
-            textStyle: const TextStyle(color: Colors.black, fontSize: 30),
+            textStyle: const TextStyle(color: Colors.black, fontSize: 20),
           ),
         ),
       ),
