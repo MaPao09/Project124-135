@@ -302,7 +302,7 @@ Future<void> _cancelBooking(BuildContext context, String bookingId) async {
         actions: [
           TextButton(
             child: Text(
-              'ยดเลิก',
+              'ยกเลิก',
               style: GoogleFonts.itim(
                 textStyle: const TextStyle(
                   color: Colors.blue,
